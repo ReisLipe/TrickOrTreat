@@ -9,23 +9,25 @@ import SwiftUI
 
 struct OpenView: View {
     private var logoHeight: CGFloat = 160
-    private var optionHeight: CGFloat = 56
-    
+    private var optionHeight: CGFloat = 70
     
     var body: some View {
         NavigationStack {
-            VStack {
-                logo.padding(.horizontal, 35)
-                Spacer()
-                VStack(spacing: DS.item) {
-                    OptionLink(title: "Play", height: optionHeight) { GameView() }
-                    OptionLink(title: "About", height: optionHeight) { EmptyView() }
-                }.padding(.horizontal, 67)
+            ZStack {
+                Image("bg1")
+                    .resizable()
+                    .ignoresSafeArea(.all)
+                VStack {
+                    Spacer()
+                    VStack(spacing: DS.button) {
+                        OptionLink(title: "jogar", color: .roxo, height: optionHeight) { GameView() }
+                        OptionLink(title: "créditos", color: .laranja, height: optionHeight) { Credits() }
+                    }.padding(.horizontal, 56)
+                }
+                .padding(DS.page)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
         }
-        .padding(DS.page)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .navigationTitle("TrickOrTreat")
     }
     
     var logo: some View {
