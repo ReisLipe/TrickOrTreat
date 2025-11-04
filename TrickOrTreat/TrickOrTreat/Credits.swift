@@ -4,11 +4,11 @@
 //
 //  Created by mih on 31/10/25.
 //
-
 import SwiftUI
 
 struct Credits: View {
     @Environment(\.dismiss) private var dismiss
+    @State private var isAnimating = true // Adicione este State
     
     var body: some View {
         ZStack {
@@ -44,14 +44,13 @@ struct Credits: View {
                         .font(.sil(size: 20))
                         .foregroundStyle(.white)
                     
-                    CauldronAnimation()
+                    CauldronAnimation(isAnimating: $isAnimating) // Use o binding
                     
                     Text("Entre no caldeirão da diversão, você é o ajudante especial da bruxinha Carlinha. Selecione três ingredientes misteriosos e veja a magia acontecer: cada combinação transforma Carlinha em um novo visual de Halloween! Mas atenção: nem todas as poções saem como esperado...")
                         .font(.sil(size: 20))
                         .foregroundStyle(.white)
                     
                     Divider(image: "bruxaBoom")
-                    
                     
                     Text("Produzido por: Jofi, Luna e Mih.")
                         .font(.sigmar(size: 16))
@@ -71,7 +70,6 @@ struct Divider: View {
     
     var body: some View {
         HStack(spacing: 40) {
-
             StarAnimation(rotation: 360)
             
             Image(image)
