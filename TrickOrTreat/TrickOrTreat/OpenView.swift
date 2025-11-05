@@ -8,33 +8,51 @@
 import SwiftUI
 
 struct OpenView: View {
+    @State private var zoom: CGFloat = 1
+    
     private var logoHeight: CGFloat = 160
     private var optionHeight: CGFloat = 70
     
     var body: some View {
         NavigationStack {
             ZStack {
-                Image("bg1")
-                    .resizable()
-                    .ignoresSafeArea(.all)
+                animatedBackground
+                
                 VStack {
                     Spacer()
-                    VStack(spacing: DS.button) {
+                    VStack(spacing: 32) {
                         OptionLink(title: "jogar", color: .roxo, height: optionHeight) { GameView() }
                         OptionLink(title: "créditos", color: .laranja, height: optionHeight) { Credits() }
-                    }.padding(.horizontal, 56)
+                    }
+                    .padding(.horizontal, 56)
                 }
-                .padding(DS.page)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .padding(24)
+                .padding(.bottom, 60)
             }
         }
+        .onAppear {
+            startAnimation()
+        }
+    }
+}
+
+// MARK: - Animation
+
+extension OpenView {
+    var animatedBackground: some View {
+        Image("bg1")
+            .resizable()
+            .scaledToFill()
+            .scaleEffect(zoom)
+            .ignoresSafeArea()
     }
     
-    var logo: some View {
-        RoundedRectangle(cornerRadius: DS.cornerRadius)
-            .foregroundStyle(Color.placeholder)
-            .frame(height: logoHeight)
-            .frame(maxWidth: .infinity)
+    func startAnimation() {
+        withAnimation(
+            .easeInOut(duration: 6).repeatForever(autoreverses: true)
+        ) {
+            zoom = 1.2
+        }
     }
 }
 

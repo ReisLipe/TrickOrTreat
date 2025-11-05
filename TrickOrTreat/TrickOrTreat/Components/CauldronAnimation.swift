@@ -19,7 +19,7 @@ struct CauldronAnimation: View {
             .resizable()
             .scaledToFit()
             .frame(width: 200, height: 200)
-            .onChange(of: isAnimating) { newValue in
+            .onChange(of: isAnimating) { oldValue, newValue in
                 if newValue {
                     startAnimation()
                 } else {

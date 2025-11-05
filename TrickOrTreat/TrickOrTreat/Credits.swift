@@ -8,7 +8,7 @@ import SwiftUI
 
 struct Credits: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var isAnimating = true // Adicione este State
+    @State private var isAnimating = false // Mude para false
     
     var body: some View {
         ZStack {
@@ -19,6 +19,7 @@ struct Credits: View {
                 VStack {
                     Button(action: {
                         dismiss()
+                        hapticManager.play(option: (.pop()))
                     }, label: {
                         LittleButton(color: .laranja, imageName: "chevron.left")
                     })
@@ -30,7 +31,7 @@ struct Credits: View {
             VStack {
                 Text("Créditos")
                     .font(.sigmar(size: 36))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.branco)
                 
                 Spacer()
             }
@@ -42,19 +43,19 @@ struct Credits: View {
                     
                     Text("Trick or Treak é um jogo casual de point-and-click onde você ajuda a bruxinha Carlinha a preparar poções mágicas para o Halloween.")
                         .font(.sil(size: 20))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.branco)
                     
-                    CauldronAnimation(isAnimating: $isAnimating) // Use o binding
+                    CauldronAnimation(isAnimating: $isAnimating)
                     
                     Text("Entre no caldeirão da diversão, você é o ajudante especial da bruxinha Carlinha. Selecione três ingredientes misteriosos e veja a magia acontecer: cada combinação transforma Carlinha em um novo visual de Halloween! Mas atenção: nem todas as poções saem como esperado...")
                         .font(.sil(size: 20))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.branco)
                     
                     Divider(image: "bruxaBoom")
                     
                     Text("Produzido por: Jofi, Luna e Mih.")
                         .font(.sigmar(size: 16))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.branco)
                     
                 }
                 .padding(.horizontal, 24)
@@ -62,6 +63,9 @@ struct Credits: View {
             .padding(.top, 80)
         }
         .navigationBarBackButtonHidden()
+        .onAppear {
+            isAnimating = true // Ativa a animação quando a view aparecer
+        }
     }
 }
 
@@ -80,8 +84,4 @@ struct Divider: View {
             StarAnimation(rotation: -360)
         }
     }
-}
-
-#Preview {
-    Credits()
 }

@@ -16,11 +16,11 @@ struct LittleButton: View {
             .padding(.leading, 24)
             .padding(.top, 8)
             .foregroundStyle(color)
-            .shadow(color: .white.opacity(1), radius: 0, x: -4, y: 4)
+            .shadow(color: .branco.opacity(1), radius: 0, x: -4, y: 4)
             .overlay(
                 Image(systemName: imageName)
                     .font(.system(size: 24, weight: .bold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.branco)
                     .padding(.top, 8)
                     .padding(.leading, 24)
             )

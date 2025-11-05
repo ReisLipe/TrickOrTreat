@@ -26,16 +26,20 @@ struct Shelf: View {
                 .scaledToFit()
                 .frame(width: 340)
 
-            LazyVGrid(columns: columns, spacing: 44) {
+            LazyVGrid(columns: columns, spacing: 52) {
                 ForEach(0..<12, id: \.self) { index in
                     Button {
-                        selectItem(index)
+                        handleTap(index)
                     } label: {
-                        Image(gameState.images[index])
+                        Image(gameState.images[index].getImageName)
                             .resizable()
                             .scaledToFit()
                             .frame(width: 36)
-                            .opacity(gameState.itemsOpacity[index] ?? 1.0)
+                            .opacity(
+                                gameState.selectedItems.count >= 3 && !gameState.selectedItems.contains(index)
+                                ? 0.4
+                                : gameState.itemsOpacity[index] ?? 1.0
+                            )
                             .offset(
                                 x: gameState.itemsPosition[index]?.x ?? 0,
                                 y: gameState.itemsPosition[index]?.y ?? 0
@@ -55,7 +59,8 @@ struct Shelf: View {
         
         // Chama o callback para fazer a bruxa pular
         onItemSelected()
-        
+        hapticManager.play(option: (.pop()))
+
         withAnimation(.easeInOut(duration: 0.8)) {
             gameState.itemsPosition[index] = targetPosition
             gameState.itemsOpacity[index] = 0
@@ -66,6 +71,15 @@ struct Shelf: View {
                 print("Todos os 3 itens foram selecionados!")
             }
         }
+    }
+    
+    func handleTap(_ index: Int) {
+        if gameState.selectedItems.count >= 3 {
+            hapticManager.play(option: .wrongAnswerStandard())
+            return
+        }
+
+        selectItem(index)
     }
 }
 

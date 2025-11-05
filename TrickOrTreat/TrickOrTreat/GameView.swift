@@ -6,14 +6,16 @@
 //
 
 import SwiftUI
+import SwiftfulHaptics
 
 struct GameView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var gameState = GameState()
     @State private var isAnimatingCauldron = false
     @State private var showPopup = false
-    @State private var resultImage = "bruxa"
+    @State private var resultRecipe: Recipe?
     @State private var witchJump = false // Adicione este State
+    @State private var cauldronPulse = false
 
     var body: some View {
         ZStack {
@@ -25,6 +27,7 @@ struct GameView: View {
                 HStack {
                     Button {
                         dismiss()
+                        hapticManager.play(option: (.pop()))
                     } label: {
                         LittleButton(color: .roxo, imageName: "chevron.left")
                     }
@@ -33,7 +36,7 @@ struct GameView: View {
                     
                     Text("\(gameState.selectedItems.count)/3")
                         .font(.sigmar(size: 40))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.branco)
                         .shadow(color: .roxo, radius: 0, x: -4, y: 4)
                     
                     Spacer()
@@ -41,6 +44,9 @@ struct GameView: View {
                     NavigationLink(destination: RecipeBook().navigationBarBackButtonHidden()) {
                         LittleButton(color: .roxo, imageName: "book.fill")
                     }
+                    .simultaneousGesture(TapGesture().onEnded {
+                        hapticManager.play(option: (.pop()))
+                    })
                 }
                 .padding(.trailing, 24)
                 
@@ -57,8 +63,9 @@ struct GameView: View {
                 Spacer()
                 
                 CauldronAnimation(isAnimating: $isAnimatingCauldron)
-                    .scaleEffect(1.3)
+                    .scaleEffect(isAnimatingCauldron ? (cauldronPulse ? 1.45 : 1.3) : 1.3)
                     .padding(.bottom, 50)
+                    .animation(.easeInOut(duration: 0.3), value: cauldronPulse)
             }
             
             VStack {
@@ -69,7 +76,7 @@ struct GameView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(height: 200)
-                        .shadow(color: .white.opacity(1), radius: 0, x: 6, y: 2)
+                        .shadow(color: .branco.opacity(1), radius: 0, x: 6, y: 2)
                         .offset(y: witchJump ? -20 : 0)
                         .rotationEffect(.degrees(witchJump ? -5 : 0))
                         .animation(.spring(response: 0.3, dampingFraction: 0.5), value: witchJump)
@@ -105,7 +112,7 @@ struct GameView: View {
             
             // Popup
             if showPopup {
-                ResultPopup(gameState: gameState, isShowing: $showPopup, resultImage: resultImage)
+                ResultPopup(gameState: gameState, isShowing: $showPopup, recipe: resultRecipe)
                     .transition(.opacity)
             }
         }
@@ -121,49 +128,36 @@ struct GameView: View {
     
     func confirmRecipe() {
         isAnimatingCauldron = true
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        pulseCauldron()
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             isAnimatingCauldron = false
-            resultImage = determineRecipeResult()
-            
+            resultRecipe = determineRecipe()
+
             withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
                 showPopup = true
             }
         }
     }
     
-    func determineRecipeResult() -> String {
-        let selectedIngredients = gameState.selectedItems.map { gameState.images[$0] }
-        let ingredientSet = Set(selectedIngredients)
-        
-        print("Ingredientes selecionados: \(selectedIngredients)")
-        
-        // Receitas com 3 ingredientes iguais
-        if ingredientSet == ["acucar"] {
-            return "acucar"
-        } else if ingredientSet == ["sangue"] {
-            return "sangue"
-        } else if ingredientSet == ["calda"] {
-            return "calda"
+    func pulseCauldron() {
+        guard isAnimatingCauldron else { return }
+
+        cauldronPulse.toggle()
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            hapticManager.play(option: .inflate())
+            pulseCauldron()
         }
-        
-        // Receitas com 2 ingredientes específicos
-        else if ingredientSet == Set(["acucar", "sangue"]) {
-            return "bruxaDoceSangue"
-        } else if ingredientSet == Set(["acucar", "calda"]) {
-            return "bruxaDoceCalda"
-        } else if ingredientSet == Set(["sangue", "calda"]) {
-            return "bruxaSangueCalda"
-        }
-        
-        // Receita com todos os ingredientes
-        else if ingredientSet == Set(["acucar", "sangue", "calda"]) {
-            return "bruxaBoom"
-        }
-        
-        // Resultado padrão
-        return "bruxaNormal"
     }
+
+    func determineRecipe() -> Recipe? {
+        let selectedIngredients = gameState.selectedItems.map { gameState.images[$0] }
+        let selectedSet = Set(selectedIngredients)
+
+        return allRecipes.first { Set($0.ingredients) == selectedSet }
+    }
+
 }
 
 #Preview {

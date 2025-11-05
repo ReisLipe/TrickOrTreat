@@ -4,12 +4,14 @@
 //
 //  Created by mih on 04/11/25.
 //
-
 import SwiftUI
 
 struct RecipeBook: View {
     @Environment(\.dismiss) private var dismiss
-    @State var recipeSelected: Bool = true
+    
+    @State private var recipeSelected: Bool = true
+    @State private var selectedRecipe: Recipe?
+
     var body: some View {
         ZStack {
             Color.verde
@@ -55,6 +57,19 @@ struct RecipeBook: View {
             }
             .padding(.top, 168)
             
+            if recipeSelected {
+                Recipes(
+                    onSelect: { recipe in
+                        selectedRecipe = recipe
+                        recipeSelected = false
+                    }
+                )
+            } else {
+                if let recipe = selectedRecipe {
+                    Dish(recipe: recipe)
+                }
+            }
+            
             VStack {
                 HStack {
                     Button {
@@ -67,18 +82,17 @@ struct RecipeBook: View {
                     
                     Text("Receitas")
                         .font(.sigmar(size: 40))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.branco)
                         .shadow(color: .roxo, radius: 0, x: -4, y: 4)
                     
                     Spacer()
-                    
                 }
                 .padding(.trailing, 24)
                 
                 Spacer()
             }
-            
         }
+        .navigationBarBackButtonHidden()
     }
 }
 
