@@ -19,6 +19,7 @@ struct ResultPopup: View {
                 .ignoresSafeArea()
                 .onTapGesture {
                     closePopup()
+                    hapticManager.play(option: (.pop()))
                 }
             
             // Popup
@@ -29,7 +30,8 @@ struct ResultPopup: View {
                     .padding(.vertical, 140)
                 
                 VStack(spacing: 40) {
-                    Text(recipe?.name ?? "Tente novamente")                   .font(.sigmar(size: 32))
+                    Text(recipe?.name ?? "Tente novamente")
+                        .font(.sigmar(size: 32))
                         .foregroundStyle(.branco)
                     
                     Image(recipe?.image ?? "bruxaBoom")  
@@ -39,6 +41,8 @@ struct ResultPopup: View {
                     
                     Button {
                         closePopup()
+                        hapticManager.play(option: (.pop()))
+
                     } label: {
                         Text("Fechar")
                             .font(.sigmar(size: 24))

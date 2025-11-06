@@ -30,6 +30,8 @@ struct RecipeBook: View {
                 HStack {
                     Button {
                         recipeSelected = true
+                        hapticManager.play(option: (.pop()))
+
                     } label: {
                         Image(recipeSelected ? "receitaSelect" : "receitaUnselect")
                             .resizable()
@@ -43,6 +45,8 @@ struct RecipeBook: View {
                 HStack {
                     Button {
                         recipeSelected = false
+                        hapticManager.play(option: (.pop()))
+
                     } label: {
                         Image(recipeSelected ? "comidaUnselect" : "comidaSelect")
                             .resizable()
@@ -74,6 +78,7 @@ struct RecipeBook: View {
                 HStack {
                     Button {
                         dismiss()
+                        hapticManager.play(option: (.pop()))
                     } label: {
                         LittleButton(color: .roxo, imageName: "chevron.left")
                     }

@@ -79,6 +79,8 @@ struct Recipes: View {
     private func recipeBlock(recipe: Recipe) -> some View {
         Button {
             onSelect(recipe)
+            hapticManager.play(option: (.pop()))
+
         } label: {
             VStack(spacing: 4) {
                 RoundedRectangle(cornerRadius: 12)

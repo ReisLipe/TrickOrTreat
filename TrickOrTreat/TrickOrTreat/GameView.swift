@@ -87,7 +87,9 @@ struct GameView: View {
                         Button {
                             withAnimation(.easeInOut(duration: 0.5)) {
                                 gameState.resetSelection()
+                                hapticManager.play(option: (.starPower()))
                             }
+
                         } label: {
                             LittleButton(color: .roxo, imageName: "arrow.trianglehead.counterclockwise.rotate.90")
                         }
@@ -96,6 +98,8 @@ struct GameView: View {
                         
                         Button {
                             confirmRecipe()
+                            hapticManager.play(option: (.pop()))
+
                         } label: {
                             LittleButton(color: .roxo, imageName: "checkmark")
                                 .scaleEffect(1.4)
